@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>The Grammar Path · Gramática inglesa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6f1e7;
+    --paper-2:#fbf8f1;
+    --ink:#1f1b16;
+    --ink-soft:#5b5248;
+    --line:#e3dccd;
+    --green:#234d3a;
+    --green-soft:#3a6b53;
+    --ochre:#b56a35;
+    --ochre-soft:#f0e2d2;
+    --shadow:0 1px 2px rgba(31,27,22,.04),0 8px 24px rgba(31,27,22,.06);
+    --radius:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:'Lexend',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.55;
+    font-weight:400;
+    overflow-x:hidden;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  /* subtle paper grain */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    opacity:.5;mix-blend-mode:multiply;
+    background-image:radial-gradient(circle at 1px 1px, rgba(31,27,22,.04) 1px, transparent 0);
+    background-size:14px 14px;
+  }
+  .wrap{max-width:540px;margin:0 auto;position:relative;z-index:1}
+
+  /* ---------- Header ---------- */
+  header{
+    padding:30px 22px 0;
+    background:linear-gradient(180deg,var(--paper-2),var(--paper));
+    border-bottom:1px solid var(--line);
+    position:sticky;top:0;z-index:30;
+    backdrop-filter:blur(8px);
+  }
+  .brandrow{display:flex;align-items:center;gap:11px}
+  .crest{
+    width:38px;height:38px;border-radius:11px;flex:none;
+    background:var(--green);color:var(--paper-2);
+    display:grid;place-items:center;
+    font-family:'Fraunces',serif;font-weight:600;font-size:20px;
+    box-shadow:var(--shadow);
+  }
+  .brand h1{font-family:'Fraunces',serif;font-weight:600;font-size:21px;letter-spacing:-.01em;line-height:1.1}
+  .brand p{font-size:12.5px;color:var(--ink-soft);margin-top:1px}
+
+  /* ---------- Tabs ---------- */
+  .tabs{display:flex;gap:2px;margin-top:16px;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:none;border:none;background:none;font-family:inherit;font-size:14px;font-weight:500;
+    color:var(--ink-soft);padding:11px 14px 13px;cursor:pointer;position:relative;
+    white-space:nowrap;transition:color .2s ease;
+  }
+  .tab[aria-selected="true"]{color:var(--green)}
+  .tab[aria-selected="true"]::after{
+    content:"";position:absolute;left:14px;right:14px;bottom:0;height:2.5px;
+    background:var(--green);border-radius:3px 3px 0 0;
+  }
+
+  /* ---------- Home / categories ---------- */
+  main{padding:8px 18px 60px}
+  .cat{margin-top:24px}
+  .cat-head{display:flex;align-items:baseline;gap:9px;padding:0 4px 11px}
+  .cat-head h2{font-family:'Fraunces',serif;font-weight:600;font-size:17px;letter-spacing:-.01em}
+  .cat-head .n{font-size:12px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  .cards{display:flex;flex-direction:column;gap:10px}
+  .card{
+    background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 17px;cursor:pointer;box-shadow:var(--shadow);
+    transition:transform .15s ease,border-color .2s ease;
+    display:flex;align-items:flex-start;gap:13px;
+    text-align:left;width:100%;font-family:inherit;color:inherit;
+  }
+  .card:active{transform:scale(.985)}
+  .card .ico{
+    width:34px;height:34px;border-radius:10px;flex:none;margin-top:1px;
+    background:var(--ochre-soft);color:var(--ochre);
+    display:grid;place-items:center;font-weight:600;font-size:15px;
+    font-family:'Fraunces',serif;
+  }
+  .card .body{flex:1;min-width:0}
+  .card .t{font-weight:500;font-size:15.5px;letter-spacing:-.01em;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .card .s{font-size:13px;color:var(--ink-soft);margin-top:3px;line-height:1.45}
+  .chev{flex:none;align-self:center;color:var(--line);font-size:20px}
+
+  /* ---------- Detail view ---------- */
+  .detail{
+    position:fixed;inset:0;z-index:50;background:var(--paper);
+    transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+  }
+  .detail.open{transform:translateX(0)}
+  .dtop{
+    position:sticky;top:0;z-index:5;padding:16px 18px 12px;
+    background:var(--paper);border-bottom:1px solid var(--line);
+    backdrop-filter:blur(8px);
+  }
+  .back{
+    display:inline-flex;align-items:center;gap:6px;border:none;background:none;
+    font-family:inherit;font-size:14px;font-weight:500;color:var(--green);cursor:pointer;padding:4px 0;
+  }
+  .dwrap{max-width:540px;margin:0 auto;padding:8px 22px 70px}
+  .dwrap h2{font-family:'Fraunces',serif;font-weight:600;font-size:27px;letter-spacing:-.02em;line-height:1.12;margin-top:14px}
+  .dwrap .lead{color:var(--ink-soft);font-size:14.5px;margin-top:8px}
+
+  .block{margin-top:26px}
+  .block h3{
+    font-family:'Lexend',sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--ochre);margin-bottom:11px;
+    display:flex;align-items:center;gap:9px;
+  }
+  .block h3::after{content:"";flex:1;height:1px;background:var(--line)}
+  .prose{font-size:15px}
+  .formula{
+    background:var(--paper-2);border:1px solid var(--line);border-left:3px solid var(--green);
+    border-radius:12px;padding:13px 15px;font-size:14.5px;margin-bottom:9px;
+  }
+  .formula b{font-family:'Fraunces',serif;font-weight:600;color:var(--green)}
+  .ex{
+    border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:9px;background:var(--paper-2);
+  }
+  .ex .en{font-size:15.5px;font-weight:500}
+  .ex .en em{font-style:normal;color:var(--green);text-decoration:underline;text-decoration-color:var(--green-soft);text-underline-offset:3px}
+  .ex .es{font-size:13px;color:var(--ink-soft);margin-top:3px}
+  .markers{display:flex;flex-wrap:wrap;gap:7px}
+  .marker{background:var(--ochre-soft);color:var(--ochre);font-size:13px;font-weight:500;padding:5px 12px;border-radius:100px}
+  .err{display:flex;gap:10px;font-size:14.5px;padding:9px 0;border-bottom:1px solid var(--line)}
+  .err:last-child{border-bottom:none}
+  .err .x{color:#c0492f;font-weight:600;flex:none}
+  .err s{color:var(--ink-soft);text-decoration-color:#c0492f}
+  .note{
+    margin-top:24px;background:var(--paper-2);border:1px solid var(--line);
+    border-left:3px solid var(--ochre);border-radius:12px;padding:14px 16px;
+  }
+  .note h3{color:var(--ochre);margin-bottom:7px}
+  .note h3::after{background:var(--line)}
+  .note p{font-size:14.5px;line-height:1.55;color:var(--ink)}
+  .note em{color:var(--green);font-style:normal;font-weight:500}
+  .soon{text-align:center;color:var(--ink-soft);font-size:14px;padding:40px 10px;border:1px dashed var(--line);border-radius:14px;margin-top:24px}
+
+  footer{padding:26px 22px 40px;text-align:center;color:var(--ink-soft);font-size:12px;border-top:1px solid var(--line);margin-top:10px}
+  footer b{font-family:'Fraunces',serif;color:var(--ink);font-weight:600}
+
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .card{animation:rise .4s ease both}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brandrow">
+      <div class="crest">G</div>
+      <div class="brand">
+        <h1>The Grammar Path</h1>
+        <p>Gramática inglesa, clara y al grano</p>
+      </div>
+    </div>
+    <nav class="tabs" id="tabs"></nav>
+  </header>
+
+  <main id="home"></main>
+
+  <footer>
+    <b>The Grammar Path</b><br>Una versión de muestra · contenido ampliable
+  </footer>
+</div>
+
+<!-- Detail view -->
+<section class="detail" id="detail" aria-hidden="true">
+  <div class="dtop">
+    <button class="back" id="back">‹ Volver</button>
+  </div>
+  <div class="dwrap" id="detailBody"></div>
+</section>
+
+<script>
+const CATS = [
+  {id:'tiempos', name:'Tiempos verbales', tab:'Tiempos', icon:'⏱'},
+  {id:'modales',  name:'Verbos modales', tab:'Modales', icon:'M'},
+  {id:'cond',     name:'Condicionales', tab:'Condicionales', icon:'If'},
+  {id:'otros',    name:'Gramática esencial', tab:'Esencial', icon:'+'},
+];
+
+// levels: ['principiante'] | ['avanzado'] | ['principiante','avanzado']
+const TOPICS = [
+  // ===================== TIEMPOS VERBALES =====================
+  {
+    id:'present-simple', cat:'tiempos',
+    title:'Present Simple',
+    summary:'Rutinas, hábitos y hechos generales.',
+    uso:'Hablamos de rutinas, hábitos, hechos permanentes y horarios. Es el tiempo de lo que ocurre "siempre" o "en general".',
+    forma:['<b>I / you / we / they</b> + verbo','<b>he / she / it</b> + verbo<b>-s</b>','Negativa: <b>don\'t / doesn\'t</b> + verbo','Pregunta: <b>Do / Does</b> + sujeto + verbo'],
+    marcadores:['always','usually','often','sometimes','never','every day','on Mondays'],
+    ejemplos:[
+      ['She <em>works</em> in London.','Trabaja en Londres.'],
+      ['I <em>don\'t like</em> tea.','No me gusta el té.'],
+      ['<em>Do</em> you speak English?','¿Hablas inglés?'],
+    ],
+    errores:[['Olvidar la -s en 3ª persona','She work here'],['Repetir la -s tras <i>does</i>','Does he works?']],
+    uk:'Para hablar de posesión, lo más natural es <em>have got</em>: «I\'ve got a car» es más habitual en conversación que «I have a car», aunque las dos valen.'
+  },
+  {
+    id:'present-continuous', cat:'tiempos',
+    title:'Present Continuous',
+    summary:'Lo que ocurre ahora mismo o de forma temporal.',
+    uso:'Para acciones que ocurren en este momento o alrededor de él, situaciones temporales y planes futuros ya concertados.',
+    forma:['<b>am / is / are</b> + verbo<b>-ing</b>','Negativa: <b>am not / isn\'t / aren\'t</b> + -ing','Pregunta: <b>Am / Is / Are</b> + sujeto + -ing'],
+    marcadores:['now','right now','at the moment','today','currently','these days'],
+    ejemplos:[
+      ['She <em>is working</em> from home today.','Hoy trabaja desde casa.'],
+      ['They <em>aren\'t listening</em>.','No están escuchando.'],
+      ['What <em>are</em> you <em>doing</em>?','¿Qué estás haciendo?'],
+    ],
+    errores:[['Usarlo con verbos de estado','I am knowing the answer'],['Olvidar el verbo be','She working now']],
+    uk:''
+  },
+  {
+    id:'present-perfect', cat:'tiempos',
+    title:'Present Perfect',
+    summary:'Pasado con conexión al presente: experiencias y resultados.',
+    uso:'Acciones pasadas que siguen siendo relevantes ahora: experiencias de vida, acciones recientes y situaciones que empezaron en el pasado y continúan (con since/for).',
+    forma:['<b>have / has</b> + participio pasado','Negativa: <b>haven\'t / hasn\'t</b> + participio','Pregunta: <b>Have / Has</b> + sujeto + participio'],
+    marcadores:['just','already','yet','ever','never','since','for','recently','so far'],
+    ejemplos:[
+      ['I\'ve <em>just finished</em> my homework.','Acabo de terminar los deberes.'],
+      ['<em>Have</em> you ever <em>been</em> to Scotland?','¿Has estado alguna vez en Escocia?'],
+      ['She <em>has lived</em> here for ten years.','Lleva diez años viviendo aquí.'],
+    ],
+    errores:[['Mezclarlo con el Past Simple','I have seen him yesterday'],['Usar Past Simple con yet/just','I already ate']],
+    uk:'Con <em>just, already</em> y <em>yet</em>, lo natural es el Present Perfect: «I\'ve just eaten», «Have you finished yet?». Evita el Past Simple en estos casos.'
+  },
+  {
+    id:'present-perfect-continuous', cat:'tiempos',
+    title:'Present Perfect Continuous',
+    summary:'Acciones que vienen ocurriendo, con foco en la duración.',
+    uso:'Acciones que empezaron en el pasado y siguen, o que acaban de terminar, poniendo el énfasis en cuánto han durado o en el proceso.',
+    forma:['<b>have / has been</b> + verbo<b>-ing</b>','Negativa: <b>haven\'t / hasn\'t been</b> + -ing','Pregunta: <b>Have / Has</b> + sujeto + <b>been</b> + -ing'],
+    marcadores:['for','since','all day','lately','recently','how long'],
+    ejemplos:[
+      ['I\'ve <em>been studying</em> for three hours.','Llevo tres horas estudiando.'],
+      ['It\'s <em>been raining</em> all day.','Ha estado lloviendo todo el día.'],
+      ['How long <em>have</em> you <em>been waiting</em>?','¿Cuánto llevas esperando?'],
+    ],
+    errores:[['Usarlo con verbos de estado','I\'ve been knowing him'],['Olvidar been','I have studying']],
+    uk:''
+  },
+  {
+    id:'past-simple', cat:'tiempos',
+    title:'Past Simple',
+    summary:'Acciones terminadas en un momento concreto del pasado.',
+    uso:'Para acciones que empezaron y terminaron en un momento definido del pasado. Es el tiempo de las historias y los relatos.',
+    forma:['Regulares: verbo + <b>-ed</b>','Irregulares: forma propia (go → went)','Negativa: <b>didn\'t</b> + infinitivo','Pregunta: <b>Did</b> + sujeto + infinitivo'],
+    marcadores:['yesterday','last week','in 2010','two days ago','when'],
+    ejemplos:[
+      ['We <em>visited</em> Bath last summer.','Visitamos Bath el verano pasado.'],
+      ['I <em>didn\'t see</em> her.','No la vi.'],
+      ['<em>Did</em> you <em>call</em> him?','¿Le llamaste?'],
+    ],
+    errores:[['Usar pasado tras did','I didn\'t went'],['Inventar irregulares','I goed home']],
+    uk:''
+  },
+  {
+    id:'past-continuous', cat:'tiempos',
+    title:'Past Continuous',
+    summary:'Acciones en desarrollo en un momento del pasado.',
+    uso:'Para acciones que estaban ocurriendo en un punto del pasado, a menudo interrumpidas por otra, o como telón de fondo de una narración.',
+    forma:['<b>was / were</b> + verbo<b>-ing</b>','Negativa: <b>wasn\'t / weren\'t</b> + -ing','Pregunta: <b>Was / Were</b> + sujeto + -ing'],
+    marcadores:['while','when','as','at 8 o\'clock','all evening'],
+    ejemplos:[
+      ['I <em>was cooking</em> when she called.','Estaba cocinando cuando llamó.'],
+      ['They <em>were playing</em> in the garden.','Jugaban en el jardín.'],
+      ['What <em>were</em> you <em>doing</em> at ten?','¿Qué hacías a las diez?'],
+    ],
+    errores:[['Confundir was/were','We was sleeping'],['Usarlo para algo breve y completo','I was breaking the glass']],
+    uk:''
+  },
+  {
+    id:'past-perfect', cat:'tiempos',
+    title:'Past Perfect',
+    summary:'El "pasado del pasado": algo anterior a otra acción pasada.',
+    uso:'Para una acción del pasado que ocurrió antes que otra acción también pasada. Aclara el orden de los hechos.',
+    forma:['<b>had</b> + participio pasado','Negativa: <b>hadn\'t</b> + participio','Pregunta: <b>Had</b> + sujeto + participio'],
+    marcadores:['before','after','already','by the time','when'],
+    ejemplos:[
+      ['When I arrived, they <em>had left</em>.','Cuando llegué, ya se habían ido.'],
+      ['She <em>had never seen</em> snow before.','Nunca había visto la nieve.'],
+      ['<em>Had</em> you <em>finished</em> by then?','¿Habías terminado para entonces?'],
+    ],
+    errores:[['No marcar la anterioridad','When I arrived they left'],['Olvidar el participio','had went']],
+    uk:''
+  },
+  {
+    id:'past-perfect-continuous', cat:'tiempos',
+    title:'Past Perfect Continuous',
+    summary:'Una acción que duró y terminó antes de otro momento pasado.',
+    uso:'Para una acción que se prolongó durante un tiempo y acabó antes de otro punto del pasado, con foco en la duración.',
+    forma:['<b>had been</b> + verbo<b>-ing</b>','Negativa: <b>hadn\'t been</b> + -ing','Pregunta: <b>Had</b> + sujeto + <b>been</b> + -ing'],
+    marcadores:['for','since','before','all day','how long'],
+    ejemplos:[
+      ['She was tired because she <em>had been working</em> all night.','Estaba cansada porque había estado trabajando toda la noche.'],
+      ['They <em>had been waiting</em> for an hour when the bus came.','Llevaban una hora esperando cuando llegó el bus.'],
+      ['How long <em>had</em> you <em>been living</em> there?','¿Cuánto llevabas viviendo allí?'],
+    ],
+    errores:[['Confundirlo con el past perfect simple','had worked all night (sin foco en duración)'],['Usarlo con verbos de estado','had been knowing']],
+    uk:''
+  },
+  {
+    id:'future-will-going-to', cat:'tiempos',
+    title:'Will / Be going to',
+    summary:'Las dos formas básicas de hablar del futuro.',
+    uso:'<b>Will</b>: decisiones espontáneas, predicciones y promesas. <b>Be going to</b>: planes ya decididos, intenciones y predicciones con evidencia presente.',
+    forma:['<b>will</b> + infinitivo sin <i>to</i>','<b>am / is / are going to</b> + infinitivo','Negativa: <b>won\'t</b> / <b>am not going to</b>'],
+    marcadores:['tomorrow','next week','soon','probably','I think','in the future'],
+    ejemplos:[
+      ['I<em>\'ll help</em> you with that.','Te ayudo con eso.'],
+      ['We<em>\'re going to travel</em> this summer.','Vamos a viajar este verano.'],
+      ['It<em>\'s going to rain</em> — look at those clouds.','Va a llover, mira esas nubes.'],
+    ],
+    errores:[['Usar will para planes ya decididos','I will travel this summer (ya planeado)'],['Mezclar will y going to','I will going to'],],
+    uk:'Para planes ya concertados con día y hora, también se usa el Present Continuous: «We\'re meeting Tom at six».'
+  },
+  {
+    id:'future-continuous', cat:'tiempos',
+    title:'Future Continuous',
+    summary:'Algo que estará ocurriendo en un momento del futuro.',
+    uso:'Para una acción que estará en pleno desarrollo en un momento concreto del futuro.',
+    forma:['<b>will be</b> + verbo<b>-ing</b>','Negativa: <b>won\'t be</b> + -ing','Pregunta: <b>Will</b> + sujeto + <b>be</b> + -ing'],
+    marcadores:['this time tomorrow','at 8 tonight','all day','in the future'],
+    ejemplos:[
+      ['This time tomorrow I\'ll <em>be flying</em> to London.','Mañana a esta hora estaré volando a Londres.'],
+      ['She\'ll <em>be working</em> late tonight.','Estará trabajando hasta tarde.'],
+      ['<em>Will</em> you <em>be using</em> the car later?','¿Vas a estar usando el coche luego?'],
+    ],
+    errores:[['Confundirlo con el future simple','I will fly at this time tomorrow'],['Olvidar be','will working']],
+    uk:''
+  },
+  {
+    id:'future-perfect', cat:'tiempos',
+    title:'Future Perfect',
+    summary:'Algo que estará terminado antes de un momento del futuro.',
+    uso:'Para una acción que ya habrá concluido antes de un punto determinado del futuro.',
+    forma:['<b>will have</b> + participio pasado','Negativa: <b>won\'t have</b> + participio','Pregunta: <b>Will</b> + sujeto + <b>have</b> + participio'],
+    marcadores:['by','by then','by next year','before','in time'],
+    ejemplos:[
+      ['By 2030 I\'ll <em>have finished</em> my degree.','Para 2030 habré terminado la carrera.'],
+      ['They\'ll <em>have left</em> by the time we arrive.','Ya se habrán ido cuando lleguemos.'],
+      ['<em>Will</em> you <em>have finished</em> by Friday?','¿Habrás terminado para el viernes?'],
+    ],
+    errores:[['Usar futuro simple con "by"','I will finish by 2030'],['Olvidar el participio','will have finish']],
+    uk:''
+  },
+
+  // ===================== VERBOS MODALES =====================
+  {
+    id:'can-could', cat:'modales',
+    title:'Can / Could',
+    summary:'Capacidad, permiso y peticiones educadas.',
+    uso:'<b>Can</b> expresa capacidad, permiso o posibilidad en presente. <b>Could</b> es su pasado, y además sirve para peticiones más educadas.',
+    forma:['<b>can / could</b> + infinitivo sin <i>to</i>','Negativa: <b>can\'t / couldn\'t</b>','Igual para todas las personas (sin -s)'],
+    marcadores:['ability','permission','polite request','possibility'],
+    ejemplos:[
+      ['I <em>can</em> swim.','Sé nadar.'],
+      ['<em>Could</em> you help me, please?','¿Podrías ayudarme, por favor?'],
+      ['She <em>couldn\'t</em> come yesterday.','No pudo venir ayer.'],
+    ],
+    errores:[['Añadir to','I can to swim'],['Poner -s en 3ª persona','He cans drive']],
+    uk:''
+  },
+  {
+    id:'may-might', cat:'modales',
+    title:'May / Might',
+    summary:'Posibilidad de que algo ocurra, y permiso formal.',
+    uso:'Expresan que algo es posible (presente o futuro). <b>May</b> también sirve para pedir o dar permiso de forma formal.',
+    forma:['<b>may / might</b> + infinitivo sin <i>to</i>','Negativa: <b>may not / might not</b>','Igual para todas las personas'],
+    marcadores:['possibility','perhaps','maybe','formal permission'],
+    ejemplos:[
+      ['It <em>may</em> rain later.','Puede que llueva luego.'],
+      ['She <em>might not</em> come.','Puede que no venga.'],
+      ['<em>May</em> I come in?','¿Puedo pasar?'],
+    ],
+    errores:[['Añadir to','It may to rain'],['Poner -s','He mays come']],
+    uk:''
+  },
+  {
+    id:'must-have-to', cat:'modales',
+    title:'Must / Have to',
+    summary:'Obligación, necesidad y prohibición.',
+    uso:'<b>Must</b>: obligación fuerte o impuesta por el hablante. <b>Have to</b>: obligación externa. <b>Mustn\'t</b>: prohibición. <b>Don\'t have to</b>: no es necesario.',
+    forma:['<b>must</b> + infinitivo sin <i>to</i>','<b>have to / has to</b> + infinitivo','<b>mustn\'t</b> (prohibido) ≠ <b>don\'t have to</b> (no hace falta)'],
+    marcadores:['obligation','prohibition','necessity','rules'],
+    ejemplos:[
+      ['You <em>must</em> wear a seatbelt.','Debes llevar el cinturón.'],
+      ['I <em>have to</em> work on Saturday.','Tengo que trabajar el sábado.'],
+      ['You <em>mustn\'t</em> smoke here.','No debes fumar aquí.'],
+    ],
+    errores:[['Confundir mustn\'t con don\'t have to','You mustn\'t come (si solo es opcional)'],['Poner to tras must','You must to go']],
+    uk:''
+  },
+  {
+    id:'should-ought-to', cat:'modales',
+    title:'Should / Ought to',
+    summary:'Consejos, recomendaciones y opiniones.',
+    uso:'Para dar consejos, recomendaciones u opiniones sobre lo más adecuado. <b>Should</b> y <b>ought to</b> son casi equivalentes.',
+    forma:['<b>should</b> + infinitivo sin <i>to</i>','<b>ought to</b> + infinitivo','Negativa: <b>shouldn\'t</b>'],
+    marcadores:['advice','recommendation','opinion'],
+    ejemplos:[
+      ['You <em>should</em> see a doctor.','Deberías ir al médico.'],
+      ['We <em>ought to</em> leave early.','Deberíamos salir pronto.'],
+      ['You <em>shouldn\'t</em> worry so much.','No deberías preocuparte tanto.'],
+    ],
+    errores:[['Quitar to a ought','You ought go'],['Poner to a should','You should to go']],
+    uk:''
+  },
+  {
+    id:'modal-perfects', cat:'modales',
+    title:'Modal Perfects',
+    summary:'Especular y deducir sobre el pasado.',
+    uso:'Combinamos un modal con <i>have</i> + participio para hacer deducciones, críticas o suposiciones sobre algo ya ocurrido.',
+    forma:['<b>must have</b> + participio → deducción casi segura','<b>might / could have</b> + participio → posibilidad','<b>should have</b> + participio → reproche'],
+    marcadores:['deduction','speculation','regret','criticism'],
+    ejemplos:[
+      ['She <em>must have left</em> early.','Debe de haberse ido pronto.'],
+      ['You <em>should have told</em> me.','Deberías habérmelo dicho.'],
+      ['They <em>might have forgotten</em>.','Puede que se les haya olvidado.'],
+    ],
+    errores:[['Escribir «of» en vez de «have»','must of left'],['Olvidar el participio','should have went']],
+    uk:''
+  },
+  {
+    id:'used-to-would', cat:'modales',
+    title:'Used to / Would',
+    summary:'Hábitos y estados del pasado que ya no ocurren.',
+    uso:'Para hablar de costumbres del pasado que ya no son ciertas. <b>Used to</b> sirve para hábitos y estados; <b>would</b> solo para hábitos repetidos, no para estados.',
+    forma:['<b>used to</b> + infinitivo','<b>would</b> + infinitivo (hábitos repetidos)','Negativa: <b>didn\'t use to</b>'],
+    marcadores:['in the past','as a child','back then','every summer'],
+    ejemplos:[
+      ['I <em>used to</em> play the piano.','Antes tocaba el piano.'],
+      ['We <em>would</em> spend summers at the coast.','Solíamos pasar los veranos en la costa.'],
+      ['There <em>used to</em> be a cinema here.','Antes había un cine aquí.'],
+    ],
+    errores:[['Escribir "use to" en afirmativa','I use to swim'],['Usar would con estados','I would have a dog']],
+    uk:''
+  },
+
+  // ===================== CONDICIONALES =====================
+  {
+    id:'zero-conditional', cat:'cond',
+    title:'Zero Conditional',
+    summary:'Verdades generales y hechos que siempre se cumplen.',
+    uso:'Para verdades generales, hechos científicos y resultados automáticos: si pasa A, siempre pasa B.',
+    forma:['<b>If</b> + present simple, present simple','<i>if</i> se puede sustituir por <i>when</i>'],
+    marcadores:['if','when','always','generally'],
+    ejemplos:[
+      ['If you <em>heat</em> ice, it <em>melts</em>.','Si calientas el hielo, se derrite.'],
+      ['Plants <em>die</em> if they <em>don\'t get</em> water.','Las plantas mueren si no reciben agua.'],
+      ['When it <em>rains</em>, the ground <em>gets</em> wet.','Cuando llueve, el suelo se moja.'],
+    ],
+    errores:[['Usar will (aquí no hay futuro)','If you heat ice, it will melt'],['Cambiar a pasado','If you heated ice...']],
+    uk:''
+  },
+  {
+    id:'first-conditional', cat:'cond',
+    title:'First Conditional',
+    summary:'Situaciones reales y probables en el futuro.',
+    uso:'Para condiciones realistas: si pasa A (posible), ocurrirá B. Es el "si... entonces" del día a día.',
+    forma:['<b>If</b> + present simple, <b>will</b> + infinitivo','El orden se puede invertir (sin coma)'],
+    marcadores:['if','unless','as soon as','when'],
+    ejemplos:[
+      ['If it <em>rains</em>, we<em>\'ll stay</em> home.','Si llueve, nos quedaremos en casa.'],
+      ['You<em>\'ll pass</em> if you <em>study</em>.','Aprobarás si estudias.'],
+      ['<em>Unless</em> you hurry, you\'ll be late.','A menos que te des prisa, llegarás tarde.'],
+    ],
+    errores:[['Usar will tras if','If it will rain'],['Olvidar el present simple','If you will study']],
+    uk:''
+  },
+  {
+    id:'second-conditional', cat:'cond',
+    title:'Second Conditional',
+    summary:'Situaciones hipotéticas o improbables.',
+    uso:'Para imaginar situaciones poco probables o irreales en el presente o futuro: «si fuera/tuviera...».',
+    forma:['<b>If</b> + past simple, <b>would</b> + infinitivo','Con <i>to be</i> se usa <b>were</b> para todas las personas'],
+    marcadores:['hypothetical','imaginary','advice','were'],
+    ejemplos:[
+      ['If I <em>had</em> more money, I<em>\'d travel</em>.','Si tuviera más dinero, viajaría.'],
+      ['What <em>would</em> you do if you <em>won</em>?','¿Qué harías si ganaras?'],
+      ['If I <em>were</em> you, I\'d apologise.','Yo que tú, me disculparía.'],
+    ],
+    errores:[['Usar would tras if','If I would have'],['Usar was en registro formal','If I was rich (formal)']],
+    uk:'En registro formal se usa <em>were</em> para todas las personas: «If I <em>were</em> you...», no «If I was you...».'
+  },
+  {
+    id:'third-conditional', cat:'cond',
+    title:'Third Conditional',
+    summary:'Situaciones imaginarias del pasado que no ocurrieron.',
+    uso:'Para imaginar un pasado distinto del real: lamentos, críticas y "lo que habría pasado si...".',
+    forma:['<b>If</b> + past perfect, <b>would have</b> + participio'],
+    marcadores:['hypothetical past','regret','criticism'],
+    ejemplos:[
+      ['If I <em>had studied</em>, I <em>would have passed</em>.','Si hubiera estudiado, habría aprobado.'],
+      ['She <em>wouldn\'t have missed</em> the train if she\'d left earlier.','No habría perdido el tren si hubiera salido antes.'],
+      ['What <em>would</em> you <em>have done</em>?','¿Qué habrías hecho?'],
+    ],
+    errores:[['Usar would have tras if','If I would have known'],['Mezclar los tiempos','If I studied, I would have passed']],
+    uk:''
+  },
+  {
+    id:'mixed-conditionals', cat:'cond',
+    title:'Mixed Conditionals',
+    summary:'Conectan un pasado y un presente hipotéticos.',
+    uso:'Combinan dos momentos: una condición pasada con consecuencia presente, o una condición presente con consecuencia pasada.',
+    forma:['<b>If</b> + past perfect, <b>would</b> + infinitivo (pasado → presente)','<b>If</b> + past simple, <b>would have</b> + participio (presente → pasado)'],
+    marcadores:['past affecting present','present affecting past'],
+    ejemplos:[
+      ['If I <em>had saved</em> money, I <em>would be</em> rich now.','Si hubiera ahorrado, ahora sería rico.'],
+      ['If I\'d <em>taken</em> that job, I\'d <em>live</em> in Madrid now.','Si hubiera aceptado ese trabajo, ahora viviría en Madrid.'],
+      ['If she <em>were</em> more careful, she <em>wouldn\'t have lost</em> it.','Si fuera más cuidadosa, no lo habría perdido.'],
+    ],
+    errores:[['Mantener el mismo tiempo en ambas partes','If I had saved, I would have been rich now']],
+    uk:''
+  },
+  {
+    id:'wish-if-only', cat:'cond',
+    title:'Wish / If only',
+    summary:'Expresar deseos y lamentos.',
+    uso:'Para deseos y lamentos. Para el presente se usa el pasado; para el pasado, el past perfect; y <i>would</i> para quejarse de algo que molesta.',
+    forma:['<b>wish / if only</b> + past simple → presente','<b>wish / if only</b> + past perfect → pasado','<b>wish</b> + <b>would</b> → quejas'],
+    marcadores:['regret','wish','desire','if only'],
+    ejemplos:[
+      ['I <em>wish</em> I <em>had</em> more time.','Ojalá tuviera más tiempo.'],
+      ['<em>If only</em> I <em>had known</em>!','¡Si lo hubiera sabido!'],
+      ['I wish you <em>would</em> stop shouting.','Ojalá dejaras de gritar.'],
+    ],
+    errores:[['Usar presente tras wish','I wish I have time'],['Confundir el tiempo del deseo','I wish I would be taller']],
+    uk:'Tras <em>wish</em>, en registro formal se usa <em>were</em> para todas las personas: «I wish I <em>were</em> taller».'
+  },
+
+  // ===================== GRAMÁTICA ESENCIAL =====================
+  {
+    id:'passive', cat:'otros',
+    title:'Passive Voice',
+    summary:'Cuando importa la acción, no quién la hace.',
+    uso:'Usamos la pasiva cuando el agente es desconocido, obvio o irrelevante, y queremos centrar la atención en la acción o en el objeto.',
+    forma:['<b>be</b> (en el tiempo correspondiente) + participio','El agente se añade con <b>by</b> (opcional)'],
+    marcadores:['focus on action','unknown agent','formal','reports'],
+    ejemplos:[
+      ['English <em>is spoken</em> here.','Aquí se habla inglés.'],
+      ['The house <em>was built</em> in 1900.','La casa se construyó en 1900.'],
+      ['The report <em>will be sent</em> tomorrow.','El informe se enviará mañana.'],
+    ],
+    errores:[['Confundir el tiempo del verbo be','The house is built in 1900'],['Olvidar el participio','It was build']],
+    uk:''
+  },
+  {
+    id:'articles', cat:'otros',
+    title:'Articles (a / an / the)',
+    summary:'Cuándo usar artículo definido, indefinido o ninguno.',
+    uso:'<b>a/an</b> para algo no concreto mencionado por primera vez; <b>the</b> para algo concreto o ya conocido; <b>artículo cero</b> para generalidades e incontables.',
+    forma:['<b>a</b> + consonante / <b>an</b> + vocal (sonido)','<b>the</b> = concreto / único / ya mencionado','Sin artículo: ideas generales (I love music)'],
+    marcadores:['first mention','specific','general truth','uncountable'],
+    ejemplos:[
+      ['I saw <em>a</em> dog. <em>The</em> dog was huge.','Vi un perro. El perro era enorme.'],
+      ['I love <em>music</em>.','Me encanta la música.'],
+      ['She\'s <em>an</em> engineer.','Es ingeniera.'],
+    ],
+    errores:[['Poner the en generalidades','The life is hard'],['a ante sonido vocálico','a hour']],
+    uk:''
+  },
+  {
+    id:'reported-speech', cat:'otros',
+    title:'Reported Speech',
+    summary:'Contar lo que alguien dijo sin sus palabras exactas.',
+    uso:'Para transmitir lo que otra persona dijo. Normalmente los tiempos "retroceden" un paso hacia el pasado y cambian pronombres y expresiones de tiempo.',
+    forma:['present → past, <i>will</i> → <i>would</i>, <i>can</i> → <i>could</i>','En preguntas se usa orden de afirmativa','<b>say</b> (sin objeto) / <b>tell</b> + persona'],
+    marcadores:['said','told','asked','that','the day before'],
+    ejemplos:[
+      ['"I\'m tired." → He said he <em>was</em> tired.','Dijo que estaba cansado.'],
+      ['"I\'ll call you." → She said she <em>would</em> call me.','Dijo que me llamaría.'],
+      ['"Where do you live?" → He asked where I <em>lived</em>.','Preguntó dónde vivía.'],
+    ],
+    errores:[['Mantener el orden de pregunta','He asked where do I live'],['No retroceder el tiempo','He said he is tired']],
+    uk:''
+  },
+  {
+    id:'relative-clauses', cat:'otros',
+    title:'Relative Clauses',
+    summary:'Dar información sobre un sustantivo con who, which, that…',
+    uso:'Añaden información sobre un sustantivo. Las <i>especificativas</i> identifican (sin comas); las <i>explicativas</i> añaden un dato extra (entre comas).',
+    forma:['<b>who</b> personas · <b>which</b> cosas','<b>that</b> ambas (solo especificativas)','<b>whose</b> posesión · <b>where</b> lugar'],
+    marcadores:['who','which','that','whose','where'],
+    ejemplos:[
+      ['The man <em>who</em> lives next door is a doctor.','El hombre que vive al lado es médico.'],
+      ['This is the book <em>that</em> I told you about.','Este es el libro del que te hablé.'],
+      ['My sister, <em>who</em> lives in Leeds, is a nurse.','Mi hermana, que vive en Leeds, es enfermera.'],
+    ],
+    errores:[['Usar that en explicativas','My sister, that lives in Leeds...'],['Usar which para personas','The man which lives here']],
+    uk:''
+  },
+  {
+    id:'gerunds-infinitives', cat:'otros',
+    title:'Gerunds & Infinitives',
+    summary:'Cuándo usar -ing y cuándo "to + infinitivo".',
+    uso:'Algunos verbos van seguidos de <i>-ing</i> y otros de <i>to + infinitivo</i>. Depende del primer verbo y de ciertas estructuras fijas.',
+    forma:['<b>-ing</b> tras enjoy, avoid, finish, mind y preposiciones','<b>to + infinitivo</b> tras want, decide, hope, would like'],
+    marcadores:['enjoy doing','want to do','after prepositions'],
+    ejemplos:[
+      ['I enjoy <em>reading</em>.','Disfruto leyendo.'],
+      ['She decided <em>to leave</em>.','Decidió marcharse.'],
+      ['He\'s good at <em>cooking</em>.','Se le da bien cocinar.'],
+    ],
+    errores:[['Infinitivo tras enjoy','I enjoy to read'],['-ing tras want','I want going']],
+    uk:''
+  },
+  {
+    id:'comparatives-superlatives', cat:'otros',
+    title:'Comparatives & Superlatives',
+    summary:'Comparar dos cosas o destacar una del grupo.',
+    uso:'Los comparativos comparan dos elementos; los superlativos señalan el que más destaca dentro de un grupo.',
+    forma:['Cortos: <b>-er</b> / <b>the -est</b> (tall → taller → tallest)','Largos: <b>more</b> / <b>the most</b>','Irregulares: good → better → best'],
+    marcadores:['than','the most','as...as','less'],
+    ejemplos:[
+      ['This is <em>cheaper than</em> that.','Esto es más barato que aquello.'],
+      ['She\'s <em>the best</em> student in the class.','Es la mejor de la clase.'],
+      ['It\'s not <em>as hard as</em> it looks.','No es tan difícil como parece.'],
+    ],
+    errores:[['Doble comparativo','more cheaper'],['Olvidar than','cheaper that this']],
+    uk:''
+  },
+  {
+    id:'quantifiers', cat:'otros',
+    title:'Quantifiers',
+    summary:'Hablar de cantidades: much, many, some, any…',
+    uso:'Indican cantidad. Algunos acompañan a contables, otros a incontables y otros a ambos.',
+    forma:['<b>many / few</b> + contables','<b>much / little</b> + incontables','<b>some / any / a lot of</b> + ambos'],
+    marcadores:['some','any','much','many','a lot of','few','little'],
+    ejemplos:[
+      ['There aren\'t <em>many</em> shops here.','No hay muchas tiendas.'],
+      ['I don\'t have <em>much</em> time.','No tengo mucho tiempo.'],
+      ['Would you like <em>some</em> tea?','¿Quieres un poco de té?'],
+    ],
+    errores:[['many con incontables','many money'],['much en afirmativa neutra','I have much friends']],
+    uk:''
+  },
+];
+
+const home = document.getElementById('home');
+const tabsEl = document.getElementById('tabs');
+const detail = document.getElementById('detail');
+const detailBody = document.getElementById('detailBody');
+let activeCat = CATS[0].id;
+
+function renderTabs(){
+  tabsEl.innerHTML='';
+  CATS.forEach(cat=>{
+    const b=document.createElement('button');
+    b.className='tab';
+    b.textContent=cat.tab;
+    b.setAttribute('aria-selected', cat.id===activeCat);
+    b.onclick=()=>{
+      activeCat=cat.id;
+      renderTabs();
+      renderHome();
+      home.scrollIntoView({behavior:'instant',block:'start'});
+    };
+    tabsEl.appendChild(b);
+  });
+}
+
+function renderHome(){
+  const cat = CATS.find(c=>c.id===activeCat);
+  const items = TOPICS.filter(t=>t.cat===activeCat);
+  home.innerHTML='';
+  const sec=document.createElement('section');
+  sec.className='cat';
+  sec.innerHTML=`<div class="cat-head"><h2>${cat.name}</h2><span class="n">${items.length}</span></div>`;
+  const list=document.createElement('div');
+  list.className='cards';
+  items.forEach((t,i)=>{
+    const btn=document.createElement('button');
+    btn.className='card';
+    btn.style.animationDelay=(i*0.04)+'s';
+    btn.innerHTML=`
+      <span class="ico">${cat.icon}</span>
+      <span class="body">
+        <span class="t">${t.title}</span>
+        <span class="s">${t.summary}</span>
+      </span>
+      <span class="chev">›</span>`;
+    btn.onclick=()=>openTopic(t);
+    list.appendChild(btn);
+  });
+  sec.appendChild(list);
+  home.appendChild(sec);
+}
+
+function openTopic(t){
+  let html=`<h2>${t.title}</h2>
+    <p class="lead">${t.summary}</p>
+
+    <div class="block"><h3>Cuándo se usa</h3><div class="prose">${t.uso}</div></div>
+
+    <div class="block"><h3>Estructura</h3>
+      ${t.forma.map(f=>`<div class="formula">${f}</div>`).join('')}
+    </div>
+
+    <div class="block"><h3>Marcadores</h3>
+      <div class="markers">${t.marcadores.map(m=>`<span class="marker">${m}</span>`).join('')}</div>
+    </div>
+
+    <div class="block"><h3>Ejemplos</h3>
+      ${t.ejemplos.map(e=>`<div class="ex"><div class="en">${e[0]}</div><div class="es">${e[1]}</div></div>`).join('')}
+    </div>
+
+    <div class="block"><h3>Errores comunes</h3>
+      ${t.errores.map(e=>`<div class="err"><span class="x">✕</span><div><b>${e[0]}</b><br><s>${e[1]}</s></div></div>`).join('')}
+    </div>`;
+
+  if(t.uk){
+    html+=`<div class="note"><h3>Nota</h3><p>${t.uk}</p></div>`;
+  }
+
+  detailBody.innerHTML=html;
+  detail.classList.add('open');
+  detail.setAttribute('aria-hidden','false');
+  detail.scrollTop=0;
+  document.body.style.overflow='hidden';
+}
+
+document.getElementById('back').onclick=()=>{
+  detail.classList.remove('open');
+  detail.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+};
+
+renderTabs();
+renderHome();
+</script>
+</body>
+</html>
